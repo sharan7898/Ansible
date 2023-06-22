@@ -68,4 +68,43 @@ Here are some important reasons for using Ansible, such as:
 
 * Its modularity regarding plugins, inventories, modules, and playbooks make Ansible a perfect companion orchestrates large environments.
 
+## WorkFlow of Ansible
+
+* Ansible works by connecting to your nodes and pushing out a small program called Ansible modules to them. 
+
+* Then Ansible executed these modules and removed them after finished. 
+
+* The library of modules can reside on any machine, and there are no daemons, servers, or databases required.
+
+
+![workflow](/images/workflow.webp)
+
+* In the above image, the Management Node is the controlling node that controls the entire execution of the playbook. 
+
+* The inventory file provides the list of hosts where the Ansible modules need to be run. 
+
+* The Management Node makes an SSH connection and executes the small modules on the host's machine and install the software.
+
+Ansible removes the modules once those are installed so expertly. It connects to the host machine executes the instructions, and if it is successfully installed, then remove that code in which one was copied on the host machine.
+
+#### Terms used in Ansible
+
+Here are some important terms which are used in Ansible, such as:
+
+| Terms  |  Explanation                 |
+|--------|------------------------------|
+|Ansible Server|It is a machine where Ansible is installed and from which all tasks and playbooks will be executed.|
+|Modules |The module is a command or set of similar commands which is executed on the client-side.|
+|Task	 |A task is a section which consists of a single procedure to be completed.|
+|Role	 |It is a way of organizing tasks and related files to be later called in a playbook.|
+|Fact	 |The information fetched from the client system from the global variables with the gather facts operation.|
+|Inventory|	A file containing the data regarding the Ansible client-server.|
+|Play	  |It is the execution of the playbook.|
+|Handler  |The task is called only if a notifier is present.|
+|Notifier |	The section attributed to a task which calls a handler if the output is changed.|
+|Tag	  |It is a name set to a task that can be used later on to issue just that specific task or group of jobs.|
+
+
+
+
 

@@ -108,7 +108,7 @@ Here are some important terms which are used in Ansible, such as:
 
 The Ansible orchestration engine interacts with a user who is writing the Ansible playbook to execute the Ansible orchestration and interact along with the services of private or public cloud and configuration management database. You can show in the below diagram, such as:
 
-![Architecture](/images/ansibleArchitecture.jpeg)
+![Architecture](/images/ansible-architecture.png)
 
 **Inventory**
 

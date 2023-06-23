@@ -146,6 +146,60 @@ A cloud is a network of remote servers on which you can store, manage, and proce
 
 CMDB is a type of repository which acts as a data warehouse for the IT installations.
 
+## Installation
+
+Install Ansible on Windows 11 through Windows SubSytem for Linux
+
+Open the windows PowerShell and run as administrator:
+
+Step 1: Install WSL
+
+**wsl --install**
+
+![step1](/images/step1.png)
+
+Restart the System
+
+Step 2: Enter the username and password once the installation is complete.
+
+Type sudo su and enter the password
+
+![step2](/images/step2.png)
+
+![step3](/images/step3.png)
+
+Step 3 : Perform an update to the packages
+
+**apt-get update**
+
+![step4](/images/step4.png)
+
+Step 4 :Then install the software properties common package.
+
+**apt install software-properties-common** 
+
+![step5](/images/step5.png)
+
+Step 5 : And install the Ansible personal package archive.
+
+**$ sudo apt-add-repository ppa:ansible/ansible**
+
+![step6](/images/step6.png)
+
+Step 6 :  Install the Ansible.
+
+**apt-get update**
+
+**apt-get install ansible**
+
+![step7](/images/step7.png)
+
+
+
+
+
+
+
 
 
 

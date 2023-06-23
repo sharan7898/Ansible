@@ -152,7 +152,7 @@ Install Ansible on Windows 11 through Windows SubSytem for Linux
 
 Open the windows PowerShell and run as administrator:
 
-Step 1: Install WSL
+**Step 1**: Install WSL
 
 **wsl --install**
 
@@ -160,7 +160,7 @@ Step 1: Install WSL
 
 Restart the System
 
-Step 2: Enter the username and password once the installation is complete.
+**Step 2**: Enter the username and password once the installation is complete.
 
 Type sudo su and enter the password
 
@@ -168,31 +168,33 @@ Type sudo su and enter the password
 
 ![step3](/images/step3.png)
 
-Step 3 : Perform an update to the packages
+**Step 3** : Perform an update to the packages
 
 **apt-get update**
 
 ![step4](/images/step4.png)
 
-Step 4 :Then install the software properties common package.
+**Step 4** :Then install the software properties common package.
 
 **apt install software-properties-common** 
 
 ![step5](/images/step5.png)
 
-Step 5 : And install the Ansible personal package archive.
+**Step 5** : And install the Ansible personal package archive.
 
 **$ sudo apt-add-repository ppa:ansible/ansible**
 
 ![step6](/images/step6.png)
 
-Step 6 :  Install the Ansible.
+**Step 6** :  Install the Ansible.
 
 **apt-get update**
 
 **apt-get install ansible**
 
 ![step7](/images/step7.png)
+
+U can refer the video for installing the Ansible on Windows 11 : https://www.youtube.com/watch?v=OhCbpGBOACs&t=309s
 
 
 

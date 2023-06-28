@@ -581,5 +581,135 @@ block:
 
 * **msg**: It displays the message.
 
+## Ansible Tags
+
+If you have a large playbook, it becomes useful to be able to run only a specific part of it rather than running everything in the playbook. Ansible supports a tag attribute for this reason.
+
+When you apply tags on things, then you can control whether they are executed by adding command-line options.
+
+When you execute a playbook, you can filter tasks based on the tags in two ways, such as:
+
+* On the command line, with the -tags or -skip-tags options.
+
+* In Ansible configuration settings, with the TAGS_RUN and TAGS_SKIP options.
+
+In Ansible, tags can be applied to many structures, but its simplest use is with individual tasks. Let's see an example that tags two tasks with different tags, such as:
+
+```
+
+tasks:  
+- yum:  
+    name: "{{ item }}"  
+    state: present  
+  loop:  
+  - httpd  
+  - memcached  
+  tags:  
+  - packages  
+  
+- template:  
+    src: templates/src.j2  
+    dest: /etc/foo.conf  
+  tags:  
+  - configuration
+
+```
+
+if you want to run the configuration and packages part of a very long playbook, then you can use the -tags option on the command line.
+
+```
+
+ansible-playbook example.yml --tags "configuration,packages"  
+
+```
+
+And if you want to run a playbook without certain tagged tasks, then you can use the -skip-tags command-line option.
+
+```
+
+ansible-playbook example.yml --skip-tags "packages"  
+
+```
+
+### Tag Reuse
+
+We can apply the same tag to more than one task. By using the "--tags" command line options, all tasks with that tag name will be run.
+
+**For example**: In below example, we use one tag "ntp" for several tasks, such as:
+
+```
+
+---  
+# file: roles/common/tasks/main.yml  
+  
+- name: be sure ntp is installed  
+  yum:  
+    name: ntp  
+    state: present  
+  tags: ntp  
+  
+- name: be sure ntp is configured  
+  template:  
+    src: ntp.conf.j2  
+    dest: /etc/ntp.conf  
+  notify:  
+  - restart ntpd  
+  tags: ntp  
+  
+- name: be sure ntpd is running and enabled  
+  service:  
+    name: ntpd  
+    state: started  
+    enabled: yes  
+  tags: ntp 
+
+```
+
+**Special Tags**
+
+"always" is a unique tag that will always run a task, unless specifically skipped (--skip-tags always)
+
+**For example**:
+
+```
+
+tasks:  
+- debug:  
+    msg: "Always runs"  
+  tags:  
+  - always  
+  
+- debug:  
+    msg: "runs when you use tag1"  
+  tags:  
+  - tag1  
+
+```
+
+**New in version 2.5**
+
+Here is another unique tag that is "never" which prevents a task from running unless a tag is specifically requested.
+
+**For example**:
+
+```
+
+tasks:  
+  - debug: msg="{{ showmevar }}"  
+    tags: [ never, debug ]  
+
+```
+
+In the above example, the task will only run when the "never" or "debug" tag is explicitly requested.
+
+Here are another three special keywords for tags:
+
+"**tagged**" which run only tagged,
+
+"**untagged**" which run only untagged, and
+
+"**all**" which run all tasks respectively.
+
+By default, Ansible runs as if "**--tags**" all had been specified.
 
 

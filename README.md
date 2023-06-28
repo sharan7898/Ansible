@@ -712,4 +712,94 @@ Here are another three special keywords for tags:
 
 By default, Ansible runs as if "**--tags**" all had been specified.
 
+## Ansible Galaxy
 
+Ansible Galaxy is a galaxy website where users can share roles and to a command-line tool for installing, creating, and managing roles.
+
+Ansible Galaxy gives greater visibility to one of Ansible's most exciting features, such as application installation or reusable roles for server configuration. Lots of people share roles in the Ansible Galaxy.
+
+Ansible roles consist of many playbooks, which is a way to group multiple tasks into one container to do the automation in a very effective manner with clean, directory structures.
+
+**Ansible Galaxy Commands**
+
+Here are some helpful Ansible Galaxy commands, such as:
+
+**To display the list of installed roles, with version numbers.**
+
+```
+
+ansible-galaxy list  
+
+```
+
+**To remove an installed role.**
+
+```
+
+ansible-galaxy remove [role] 
+
+```
+
+**To create a role template suitable for submission to Ansible Galaxy.**
+
+```
+
+ansible-galaxy init
+
+```
+
+### Create Roles with Ansible Galaxy
+
+* The Ansible Galaxy is essentially a large public repository of Ansible roles. Roles ship with READMEs detailing the roles use and variables. 
+
+* Ansible Galaxy contains a large number of roles that are continually evolving and increasing.
+
+* The Galaxy can use Git to add other role sources like GitHub. 
+
+* You can initialize a new galaxy role using the ansible-galaxy init or install a role directly from the Ansible galaxy role store by executing the ansible-galaxy install <name of role> command.
+
+* To create an Ansible role using the Ansible Galaxy, you need to use the ansible-galaxy command and its templates. 
+
+* Roles must be downloaded before they used in the playbooks. They are placed into the default directory that is /etc/ansible/roles.
+
+**Create Collections**
+
+Ansible Galaxy has been a tool for constructing and managing roles with new iterations of the Ansible, and you are bound to see changes or additions. On Ansible version 2.8, you get the unique feature of the collections.
+
+Collections are the distribution format for the Ansible content. They can be used to package and distribute roles, modules, playbooks, and plugins.
+
+Collections follow the following simple structure:
+
+```
+
+collection/   
+├── docs/   
+├── galaxy.yml   
+├── plugins/   
+│ ├── modules/   
+│ │ └── module1.py   
+│ ├── inventory/   
+│ └── .../   
+├── README.md   
+├── roles/   
+│ ├── role1/   
+│ ├── role2/   
+│ └── .../   
+├── playbooks/   
+│ ├── files/   
+│ ├── vars/   
+│ ├── templates/   
+│ └── tasks/   
+└── tests/ 
+
+```
+
+The ansible-galaxy-collection command implements the following commands. Some commands are the same as used with ansible-galaxy, such as:
+
+* **init**: It creates a basic collection Skeleton based on the default template included with Ansible or your own template.
+
+* **build**: It creates a collection artifact that can be uploaded to the galaxy or your own repository.
+
+* **publish**: It publishes a built connection artifact to the galaxy.
+
+* **install**: It installs one or more connections.

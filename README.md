@@ -858,3 +858,183 @@ ansible-doc yum
 
 ```
 
+## Ansible Shell
+
+* Ansible shell module is designed to execute the shell commands against the target UNIX based hosts. Ansible can run except any high complexes commands with pipes, redirection. And you can also perform the shell scripts using the Ansible shell module.
+
+* The main advantage of the Ansible shell is except any high complexes commands with pipes and semicolons can be a disadvantage from the security perspective as a single mistake could cost a lot and break the system integrity.
+
+* The Ansible shell module is designed to work only with LINUX based machines and not for the windows. For windows, you should use the win_shell
+
+* Ansible shell module can be used to execute shell scripts. Ansible has a dedicated module named script, which is used to copy the shell script from the control machine to the remote server.
+
+Let see the syntax of how to use the Ansible shell module in the playbook and Adhoc:
+
+**Syntax of Ansible shell module in a playbook**
+
+The beauty of the playbook is the way it looks and written. A playbook is written in YAML so it can be easily understood.
+
+The below image demonstrates how an Adhoc command would be transformed as a play of an Ansible playbook.
+
+![shell](/images/ansible-shell.png)
+
+**Syntax of Ansible shell module in Adhoc**
+
+The below image shows a quick syntax of the Ansible shell module in Adhoc manner.
+
+![shell2](/images/ansible-shell2.png)
+
+### Example
+
+To execute a single command in a single task using a Shell or command module. Suppose you want to get the date of the remote server. And the remote server is under the hostgroup which name is testservers.
+
+**Step 1**: Login to the Ansible server.
+
+**Step 2**: Below is an example that executes a single command using the Shell module in a remote host.
+
+```
+
+---  
+-name: Shell command example   
+Hosts: testservers  
+tasks:  
+-name: check date with the shell command  
+shell:  
+"date"  
+register: datecmd  
+tags: datecmd  
+-debug: msg= "{{datecmd.stdout}}"
+
+```
+
+In the above example, we are running our playbook against a hostgroup named testservers and executing a simple date command and saving the output of that command into a Register variable named datecmd.
+
+At the last line, we retrieve the registered variable and printing only the date command output stored in the stdout property of datecmd.
+
+### Example 2: Execute multiple commands in a single shell:
+
+The Shell can accept various commands together in a single shell play. Also, you can write your shell script with the Ansible shell module.
+
+In the below example, we grouped some shell commands to execute a controlled and clean tomcat restart.
+
+The playbook is designed to execute the following steps in order, such as:
+
+* Stop the tomcatServer
+
+* Clear the cache
+
+* Truncate the log file
+
+* Start the instance
+
+```
+
+---  
+  - name: Shell Examples  
+    hosts: testservers  
+    tasks:  
+    - name: Clear Cache and Restart tomcat  
+      become: yes  
+      delay: 10  
+      async: 10  
+      poll: 50  
+      shell: |  
+        echo -e "\n Change directory to the Tomcat"  
+        cd tomcat8/  
+        echo -e "\n Present working directory is" `pwd`  
+          
+        echo -e "\n Stopping the tomcat instance"  
+        bin/shutdown.sh  
+        echo -e "\n Clearning the tmp and work directory of tomcat"  
+        rm -rfv tmp/*  
+        rm -rfv work/*  
+        echo -e "\nTruncate the log file"  
+        > logs/catalina.out  
+        echo -e "\nDirectory listing"  
+        ls -lrtd logs/catalina.out  
+        echo -e "\nStarting the instance"  
+        bin/startup.sh      
+      args:  
+        chdir: "/apps/tomcat/"  
+      register: fileout  
+      tags: fileout   
+    - debug: msg="{{ fileout.stdout_lines }}" 
+
+```
+
+## Ansible Templates
+
+Ansible is used to manage configurations of multiple servers and environments. But these configuration files can vary for each cluster or remote server. But apart from a few parameters, all other settings will be the same.
+
+Creating static files for each of these configurations is not an efficient solution. It will take a lot of time, and every time a new cluster is added, then you have to add more files. If there is an efficient way to manage these dynamic values, it would be beneficial. This is where Ansible template modules come into play.
+
+A template is a file that contains all your configuration parameters, but the dynamic values are given as variables in the Ansible. During the playbook execution, it depends on the conditions such as which cluster you are using, and the variables will be replaced with the relevant values.
+
+You can do more than replacing the variables with the help of the Jinj2 templating engine. You can have loops, conditional statements, write macros, filters for transforming the data, do arithmetic calculations, etc.
+
+Usually, the template files will have the .j2 extension, which denotes the Jinja2 templating engine used.
+
+The double curly braces will denote the variables in a template file, **'{{variables}}'**.
+
+We need to have two parameters when using the Ansible Template module, such as:
+
+* **src**: The source of the template file. It can be a relative and absolute path.
+
+* **dest**: Dest is the destination path on the remote server.
+
+### Template Module Attributes
+
+Here are some other parameters which can be used to change some default behavior of the template module:
+
+* **Force**: If the destination file already exists, then the Force parameter will decide whether it should be replaced or not. By default, the value is yes.
+
+* **Mode**: This parameter is used to set the permissions for the destination file explicitly.
+
+* **Backup**: If you want a backup file to be created in the destination directory, you should set the value of the backup parameter to yes. By default, the value is no. and the backup file will be created every time there is a change in the destination directory.
+
+* **Group**: Name of the group that should own the directory. It is similar to executing chown command for a file in Linux systems.
+
+**Example**
+
+In the below example, we are using the template module on the example1.j2 file that replaces the default variables with values given in the playbook.
+
+**File: Playbook.yml**
+
+```
+
+---  
+- hosts: all  
+  vars:  
+    variable1: 'Hello'  
+    variable2: 'My first playbook using template'  
+  tasks:  
+    - name: Basic Template Example  
+      template:  
+        src: example1.j2  
+        dest: /home/knoldus/Documents/Ansible/output.txt  
+
+```
+**File: example1.j2**   
+
+```
+
+{{variable1}}  
+No change in this line  
+{{variable2}}  
+
+```
+
+**File: output.txt**
+
+```
+
+Hello
+No change in this line
+My first playbook using the template
+
+```
+
+You can see, their values replace both variables in the example1.j2 in the above example.
+
+  
+

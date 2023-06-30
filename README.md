@@ -1326,3 +1326,105 @@ northwest
 
 ```
 
+## Ansible Debug
+
+Ansible provides a debug module option that makes the tasks more manageable. It is a handy tool to figure out any problem areas.
+
+Ansible version 2.1 extended the debug module with a verbosity parameter that transforms it from a print line.
+
+**For example**: Let's create the playbook 1_debug_example.yml, such as:
+
+```
+
+---  
+- name: Debug Example Uptime  
+hosts: localhost  
+connection: local  
+   
+tasks:  
+- name: Find Uptime  
+shell: /usr/bin/uptime  
+register: result  
+   
+- name: Print debug message  
+debug:  
+var: result  
+verbosity: 2  
+
+```
+
+During the Ansible playbook debugging, it is useful to know how to display the registered variables or host facts.
+
+To print a message from the Ansible playbook, as well as a value of a variable, we can use the Ansible debug module. Ansible debug module is easy to use.
+
+For example: Let's execute a simple hello world playbook 2_debug_example.yml, such as:
+
+```
+
+---  
+- name: Debug Example - Hello World  
+hosts: localhost  
+tasks:  
+- name: Print debug message  
+debug: 
+
+```
+the Ansible includes a debugger as a part of the strategy plugins. This debugger enables you to debug as a task. You have access to all the features of the debugger in the context of the task. You can check or set the value of variables, update module arguments, and re-run the task with the new variables and arguments to resolve the cause of the failure.
+
+**There are many ways to invoke the debugger, such as:**
+
+**Using the debugger Keyword**
+
+The debugger keyword can be used on any block where you provide a name attribute such as a role, block, task, or play.
+
+The debugger keyword accepts several values, such as:
+
+**Always**: Always invokes the debugger, regardless of the outcome.
+
+**Never**: Never invokes the debugger, regardless of the outcome.
+
+**On_failed**: It only invokes the debugger if a task fails.
+
+**On_unreachable**: It only invokes the debugger if the host was unreachable.
+
+**On_skipped**: It only invokes the debugger if the task is skipped.
+
+**On a Task**
+
+```
+
+- name: Execute a command  
+  command: false  
+  debugger: on_failed  
+
+```
+
+**On a play**
+
+```
+
+- name: Play  
+  hosts: all  
+  debugger: on_skipped  
+  tasks:  
+    - name: Execute a command  
+      command: true  
+      when: False  
+
+```
+
+When a provided at the general level, and a more specific level, the more particular wins:
+
+```
+
+- name: Play  
+  hosts: all  
+  debugger: never  
+  tasks:  
+    - name: Execute a command  
+      command: false  
+      debugger: on_failed
+
+```
+      
+

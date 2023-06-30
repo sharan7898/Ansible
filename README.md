@@ -1426,5 +1426,105 @@ When a provided at the general level, and a more specific level, the more partic
       debugger: on_failed
 
 ```
-      
+
+## Ansible Apt
+
+APT stands for "Advanced Packaging Tool" is the preferred package management toolset in Ubuntu. It allows us to install new packages, update them, and remove the packages from Ubuntu or Debian systems. Here are 3 APT related command-line tools, such as:
+
+**Apt-get**: All the basic package management operations can be done by using this tool. Ansible apt-get module provides this functionality.
+
+**Apt-add-repository**: It is used for adding a new repository to the repository list. The default repository may not have the latest version of all the packages. So you need to add additional repositories for some software maintainers. Ansible apt_repository module provides the functionality for adding a new repository.
+
+**Apt-key**: It is used to manage the list of keys for authenticating apt packages. Ansible apt_key module is used to manage the keys.
+
+**Installing new Apt Packages**
+
+
+To install the new packages, you have to give the name of the package in the name parameter and the desired state of the package.
+
+The default state of the package is "present". Also, it is better to set the update_cache to true. Thus you can ensure the indexes are synchronized with the sources list. It is the same as running the apt-get update command before installing a package.
+
+The below example will do a cache update to synchronize the index. Check if the 'zip' package is installed on the target server. And if it is not installed, the package will be installed. If the package is already installed, then it won't be upgraded.
+
+```
+
+-hosts: loc  
+tasks:  
+-name: Ansible apt install packages   
+apt:  
+name: zip  
+state: present  
+update_cache: true
+
+```
+
+### Installing new Apt Packages
+
+1.Installing the latest version of a package
+
+If you set the state of the packages to "present", then Ansible will only check if the package is present. So if the new package is available, it will not be able to install.
+
+If you want to install the latest apt packages, then you have to set the state parameter to the latest.
+
+This will ensure the package with the latest version is installed. The below example will update the cache first, then install the latest package of zip, such as:
+
+```
+
+-hosts: loc  
+tasks:  
+-name: ansible apt install latest version  
+apt:  
+name: zip  
+state: latest  
+update_cache: true 
+
+```
+
+2.Ansible install multiple packages
+
+Instead of writing multiple tasks to install packages, you can use with_items and combine those tasks.
+
+In the below example, we are going to install 3 packages: docker-ce, Nginx, and git.
+
+```
+
+-hosts: loc  
+tasks:  
+-name: ansible apt with_items   
+apt:  
+name: "{{item}}"  
+update_cache: true  
+state: present  
+with_items:  
+-'docker-ce'  
+-'nginx'  
+-'git'
+
+```
+3.Ansible Apt ad-hoc
+
+You can also use the ad-hoc method to install new packages using the apt module, such as:
+
+```
+
+ansible all -m apt -a "name=nginx state=absent" -i inventory.ini  
+
+```
+
+**Removing Apt Packages**
+
+You can also remove the packages using apt module by setting the state parameter to absent.
+
+The below example will remove the zip package. Since the module is idempotent, it will not go through an error if the package is not present.
+
+```
+
+-hosts: loc  
+tasks:  
+-name: ansible apt remove package   
+apt:  
+name: zip  
+state: absent 
+
+```
 

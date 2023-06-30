@@ -1036,5 +1036,293 @@ My first playbook using the template
 
 You can see, their values replace both variables in the example1.j2 in the above example.
 
+## Ansible YAML
+
+* YAML is used to describe configuration that has been increasing in the past few years with the help of Ansible and SaltStack.
+
+* YAML is more easy to understand compared to other standard data formats such as XML or JSON.  
+
+* All YAML files (regardless of their association with Ansible or not) can optionally begin with --- and end with ---. This is part of the YAML format and indicates the start and end of a document.
+
+All members of a list are lines beginning at the same indentation level starting with a "-" (a dash and space):
+
+```
+
+---  
+# A list of colors  
+- White  
+- Green  
+- Red  
+- Black  
+---  
+
+```
+
+We have different ways in which the YAML data is represented, such as:
+
+**Key-value Pair**
+
+YAML uses the Key-Value pair to represent the data. And the dictionary is described in the key: value pair.
+
+**For example**, a student record
+
+```
+
+---  
+# A student record  
+Martin:  
+name: Kiran   
+roll no: 10  
+class: 12th  
+div: A  
+---  
+
+```
+
+**Abbreviation**
+
+We can also use the abbreviation to represent the directories:
+
+```
+
+Martin: [name: Kiran, roll no: 10, class: 12th, div: A] 
+
+```
+
+### Representing List
+
+We can also represent List in YAML. Every element (member) of the list should be written in a new line with the same indentation starting with "-" (- and space).
+
+**For example**: Name of the countries
+
+```
+
+---  
+#Name of country   
+Countries:    
+   - India   
+   - China   
+   - USA  
+   - Russia   
+--- 
+
+```
+
+**Abbreviation**
+
+To represent the list, we can also use the abbreviation method:
+
+```
+
+Countries: ['India', 'China', 'USA', 'Iceland']  
+
+```
+
+**List inside Dictionaries**
+
+We can use the list inside dictionaries, i.e., the value of a key is a list.
+
+**For example**, a student record
+
+```
+
+---  
+# A student record  
+Martin:  
+name: Martin   
+roll no: 10  
+class: 12th  
+div: A  
+likes:  
+- Physics   
+- Chemistry  
+- Math   
+--- 
+
+```
+
+**List of Directories**
+
+We can also make a list of directories:
+
+**For example**:
+
+```
+
+---  
+# A student record  
+- Martin:  
+name: Martin   
+roll no: 10  
+class: 12th  
+div: A  
+likes:  
+- Physics   
+- Chemistry  
+- Math   
+- Edward:  
+ name: Edward  
+ roll no: 11  
+class: 12th  
+div: A  
+likes:   
+- Biology   
+- English   
+--- 
+
+```
+
+YAML uses "|" to include newlines while showing multiple lines and ">" to suppress newlines while showing various lines. Due to this, we can read and edit long lines. In both cases, the indentation will be ignored.
+
+We can also represent Boolean (True/false) values in YAML, where Boolean values can be case insensitive.
+
+**For example**, a student result
+
+```
+
+---    
+#a student result   
+- Martin:  
+name: Martin   
+roll no: 10  
+class: 12th  
+div: A  
+likes:  
+- Physics   
+- Chemistry  
+- Math   
+     
+   result:   
+      Physics: 70   
+     Chemistry: 45   
+Math: 85  
+Biology: 65  
+      English: 80   
+     
+   passed: TRUE   
+     
+   messageIncludeNewLines: |   
+      Congratulation!!   
+      You passed with 79%   
+     
+   messageExcludeNewLines: >   
+      Congratulation!!   
+      You passed with 79%   
+---
+
+```
+
+## Ansible Inventory
+
+* Ansible works against multiple managed hosts in your infrastructure at the same time, using a list or group of lists is known as the inventory.
+
+* Once an inventory is defined, you use patterns to select the hosts or groups you want to run against to Ansible.
+
+* The default location for inventory is a file called /etc/ansible/hosts. You can also specify a different inventory file at the command line using the -i <path> option. 
+
+* You can pull the inventory file from dynamic or cloud sources or different formats (YAML, ini). Ansible has inventory plugins to make it flexible and customize.
+
+**Hosts and group**
+
+The format is /etc/ansible/ hosts are in INI like format, such as:
+
+```
+
+mail.example.com  
   
+[webservers]  
+foo.example.com  
+bar.example.com  
+  
+[dbservers]  
+one.example.com  
+two.example.com  
+three.example.com
+
+```
+
+Heading in the brackets is a group name, which is used in classifying the systems. And deciding what policy you are controlling at what time and for what purpose. You can put the systems in more than one group.
+
+For example, a server could be both a dbserver and a webserver.
+
+If you have hosts that run on a non-standard SSH port, then you can put the port number after the hostname with the colon. The Ports listed in the SSH configuration file that can be used with the OpenSSH connection but not use with the paramiko connection.
+
+To makes things explicit, it is suggested that you set them if items are not running on the default ports:
+
+```
+
+badwolf.example.com:5309
+
+```
+
+Suppose you have static IPs and want to set up some aliases that live in your host file, or you can connect through tunnels. Also, you can describe the hosts like the below example:
+
+```
+
+Jumper ansible_port=5555 ansible_host=192.0.2.50  
+
+```
+
+In the above example, trying to Ansible against the host alias "jumper" will connect 192.0.2.50 on port 5555. It is using features of the inventory file to define the special variables.
+
+### Hosts Variables
+
+You can assign the variables to the hosts that will be used in playbooks, such as:
+
+```
+
+[atlanta]  
+host1 http_port=80 maxRequestsPerChild=808  
+host2 http_port=303 maxRequestsPerChild=909 
+
+```
+
+**Group Variables**
+
+The variables can be applied to an entire group at once, such as:
+
+```
+
+[atlanta]  
+host1  
+host2  
+  
+[atlanta:vars]  
+ntp_server=ntp.atlanta.example.com  
+proxy=proxy.atlanta.example.com
+
+```
+
+**Groups of Groups and Group Variables**
+
+
+It is possible to make groups of the group using the :children's suffix. And you can apply variables using :vars.
+
+```
+
+[atlanta]  
+host1  
+host2  
+  
+[raleigh]  
+host2  
+host3  
+  
+[southeast: children]  
+Atlanta  
+Raleigh  
+  
+[southeast:vars]  
+some_server=foo.southeast.example.com  
+halon_system_timeout=30  
+self_destruct_countdown=60  
+escape_pods=2  
+  
+[usa: children]  
+southeast  
+northeast  
+southwest  
+northwest 
+
+```
 

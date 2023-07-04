@@ -1,6 +1,6 @@
 # Ansible
 
-![Ansible](/images/Ansible.png)
+![Ansible](/images/Ansiblelogo.png)
 
 ## Introduction to Ansible
 
@@ -197,7 +197,84 @@ Type sudo su and enter the password
 U can refer the video for installing the Ansible on Windows 11 : https://www.youtube.com/watch?v=OhCbpGBOACs&t=309s
 
 
+## Setup Environment in AWS
+
+* First Login to AWS account.
+
+* Go to instances running and Launch an instance as shown in the fig
+
+![aws](/images/aws1.png)
+
+* Give the name to the server and select the Operating system , here i have choosed the Ubuntu
+
+![aws](/images/aws2.png)
+
+* Create the Key pair .The key pair will be downloaded and stored in the local machine.
+
+![aws](/images/aws3.png)
+
+* Once the instance has been created go to **Actions** in the menu bar and selcet **Image and Templates** and **Lauch more like this** 
+
+![aws](/images/aws4.png)
+
+* Select the specified amount of instances required and click on the launch , here i have launched 3 instances
+
+* Once the insatnces have been created edit the name as you like.
+
+the final output should look like this.
+
+![aws](/images/aws5.png)
+
+### Installing Ansible in instance
+
+* Connecting with other servers canbe done by installing the ansible in one of the instances 
+
+* Connect the server through EC2 instance on which u want to install the ansible server and click the connect button as shown in fig:
+
+![connect](/images/c1.png)
+
+![connect](/images/c2.png)
+
+* The EC2 instance shell will be opened. updtae the instance using the following command
+
+**sudo apt update**
+
+![connect](/images/c3.png)
+
+install the ansible using the following command:
+
+**sudo apt install ansible**
+
+Ansible will be installed in the Current instance.
+
+![connect](/images/c4.png)
+
+### Connecting with servers
+
+* In order to connect with other server youu need to have an ssh in the instance.can create by following the below steps
+
+![connect](/images/c5.png)
+
+* Create file and paste the key pair you have generated before.
+
+![connect](/images/c6.png)
+
+* Once u have  key pair u can connect to other server by connecting it's IP adress as shown in image:
+
+![connect](/images/c7.png)
+
+* Create a inventory file in order to place the hosts
+
+![connect](/images/c10.png)
+
+* inside a hosts place the servers like this
+
+![connect](/images/c12.png)
+
+
 ## Ansible ad-hoc Commands
+
+* Ad-hoc commands in Ansible refer to one-line commands that are used for performing quick tasks or operations on remote hosts without the need for writing a full-fledged playbook.
 
 * Ad-hoc commands are one of the simplest ways of using Ansible. 
 
@@ -228,134 +305,26 @@ ansible <hosts> [-m <module_name>] -a <"arguments"> -u <username> [--become]
 
 **Become**: It's an optional parameter specified when we want to run operations that need sudo privilege. By default, it becomes false.
 
-### Parallelism and shell commands
+### commands
 
-You can reboot your company server in 12 parallel forks at the same time. For this, you need to set up the SSH agent for connection.
+Will Create first Ansible ad hoc command and at the same time validate that our inventory is configured as expected. Let’s go ahead and execute a ping command against all our hosts:
 
-```
-$ ssh-agent bash  
-$ ssh-add ~/.ssh/id_rsa 
+![adhoc](/images/adhoc1.png)
 
-```
+seems like we can successfully ping the 3 hosts that we have defined in our hosts file.
 
-To run reboot for all your company servers in the group, 'abc', in 12 parallel forks:
+Next, run a live command only to the server1 node by using the **–limit** flag
 
-```
-$ ansible abc -a "/sbin/reboot" -f 12
+![adhoc](/images/adhoc2.png)
 
-```
+Next will run a command to check the Memory Usage
 
-By default, Ansible will run the above ad-hoc commands from the current user account. If you want to change then pass the username in ad-hoc command as follows:
+![adhoc](/images/adhoc3.png)
 
-```
+Run a command to check the servers **uptime**
 
-$ ansible abc -a "/sbin/reboot" -f 12 -u username
+![adhoc](/images/adhoc4.png)
 
-```
-
-### File Transfer
-
-You can use ad-hoc commands for doing SCP (secure copy protocol) which means lots of files in parallel on multiple machines or servers.
-
-**Transferring file on many machines or servers**
-
-```
-
-$ ansible abc -m copy -a "src = /etc/yum.conf dest = /tmp/yum.conf"
-
-```
-**Creating new directory**
-
-```
-
-$ ansible abc -m file -a "dest = /path/user1/new mode = 888 owner = user1 group = user1 state = directory"   
-
-```
-
-Deleting all directory and files
-
-```
-
-$ ansible abc -m file -a "dest = /path/user1/new state = absent" 
-
-```
-
-### Managing Packages
-
-Ad-hoc commands are available for apt and yum module. Here are the following ad-hoc commands using yum.
-
-Below command checks, if the yum package is installed or not, but not update it.
-
-```
-
-$ ansible abc -m yum -a "name = demo-tomcat-1 state = present" 
-
-```
-
-Below command checks the package is not installed.
-
-```
-
-$ ansible abc -m yum -a "name = demo-tomcat-1 state = absent"
-
-```
-
-And below command checks the latest version of package is installed.
-
-```
-
-$ ansible abc -m yum -a "name = demo-tomcat-1 state = latest"
-
-```
-
-### Managing Users , Groups and Services
-
-You can manage, create, and remove a user account on your managed nodes with ad-hoc commands.
-
-```
-
-$ ansible all -m user -a "name=foo password=<crypted password here>"  
-  
-$ ansible all -m user -a "name=foo state=absent"  
-
-```
-
-
-**Managing Services**
-
-Ensure a service is started on all the webservers.
-
-```
-
-$ ansible webservers -m service -a "name=httpd state=started"  
-
-```
-
-Alternatively, restart a service on all webservers:
-
-```
-
-$ ansible webservers -m service -a "name=httpd state=restarted" 
-
-```
-
-Ensure a service is stopped:
-
-```
-
-$ ansible webservers -m service -a "name=httpd state=stopped"
-
-```
-
-**Gathering Facts**
-
-Fact represents the discovered variables about a system. You can use the facts to implement conditional execution of tasks, and also used to get ad-hoc information about your systems. To see all the facts:
-
-```
-
-$ ansible all -m setup  
-
-```
 
 ## Ansible PlayBook
 
@@ -383,30 +352,47 @@ A YAML starts with --- (3 hyphens) always.
 
 ### Create a Playbook
 
+Lets Create a directory inside a master server where ansible is installed 
+
+![pb1](/images/PB1.png)
+
+Change to the Playbook directory
+
+![pb2](/images/PB2.png)
+
+Create a file with .yml or .yaml extension
+
+![pb3](/images/PB3.png)
+
+
+
 Let's start by writing an example YAML file. First, we must define a task. These are the interface to ansible modules for roles and playbooks.
 
-One playbook with one play, containing multiple tasks looks like the below example.
+**Example:**
 
 ```
 ---  
-   name: install and configure DB  
-   hosts: testServer  
-   become: yes  
-  
-   vars:   
-      oracle_db_port_value : 1521  
-     
-   tasks:  
-   -name: Install the Oracle DB  
-      yum: <code to install the DB>  
-      
-   -name: Ensure the installed service is enabled and running  
-   service:  
-      name: <your service name>
+   
+- name: This Playbook will create a file
+  hosts: all
+  become: true
+  task:
+- name: create a file
+  file:
+    path: /home/ubuntu/newfile.txt
+    state: touch
 
 ```
 
-Above is a basic syntax of a playbook. Save it in a file as test.yml. A YAML syntax needs to follow the correct indentation.
+Above is a basic syntax of a playbook. Save it in a file as create_file.yml. A YAML syntax needs to follow the correct indentation.
+
+![pb4](/images/PB4.png)
+
+You  will find the file in the targeted hosts:
+
+![pb5](/images/PB5.png)
+
+
 
 ### YAML Tags
 
@@ -419,85 +405,6 @@ Here are some YAML tags are given below, such as:
 | Vars	    |Vars tag defines the variables which you can use in your playbook. Its usage is similar to the variables in any programming language.|
 | Tasks	    |Tasks are the lists of the actions which need to perform in the playbooks. All the playbooks should contain the tasks to be executed. A task field includes the name of the task. It is not mandatory but useful for debugging the playbook. Internally each task links to a piece of code called a module. A module should be executed, and arguments that are required for the module you want to run.|
 
-## Ansible Roles
-
-* Roles provide a framework for fully independent or interdependent collections of files, tasks, templates, variables, and modules.
-
-* The role is the primary mechanism for breaking a playbook into multiple files. This simplifies writing complex playbooks and makes them easier to reuse. The breaking of the playbook allows you to break the playbook into reusable components.
-
-* Each role is limited to a particular functionality or desired output, with all the necessary steps to provide that result either within the same role itself or in other roles listed as dependencies.
-
-* Roles are not playbooks. Roles are small functionality that can be used within the playbooks independently. Roles have no specific setting for which hosts the role will apply.
-
-* Top-level playbooks are the bridge holding the hosts from your inventory file to roles that should be applied to those hosts.
-
-### Creating a Role
-
-The directory structure for roles is essential to creating a new role, such as:
-
-**Role Structure**
-
-The roles have a structured layout on the file system. You can change the default structured of the roles as well.
-
-**For example**, let us stick to the default structure of the roles. Each role is a directory tree in itself. So the role name is the directory name within the /roles directory.
-
-```
-
-$ ansible-galaxy -h 
-
-```
-
-**Usage**
-
-```
-ansible-galaxy [delete|import|info|init|install|list|login|remove|search|setup] [--help] [options] ...  
-
-```
-
-**Options**
-
-
--h: (help) it shows this help message and exit.
--v: (verbose) Verbose mode (-vvv for more, -vvvv to enable connection debugging).
---version: it shows program version number and exit.
-
-
-**Roles are stored in separate directories and have a particular directory structure**
-
-```
-
-[root@ansible-server test2]# tree  
-.  
-`-- role1  
-    |-- defaults  
-    |   `-- main.yml  
-    |-- handlers  
-    |   `-- main.yml  
-    |-- meta  
-    |   `-- main.yml  
-    |-- README.md  
-    |-- tasks  
-    |   `-- main.yml  
-    |-- tests  
-    |   |-- inventory  
-    |   `-- test.yml  
-    `-- vars  
-        `-- main.yml  
-
-```
-### Explanation
-
-* The YAML file in the default directory contains a list of default variables that are to be used along with the playbook.
-
-* The handler's directory is used to store handlers.
-
-* The meta-directory is supposed to have information about the author and role dependencies.
-
-* The tasks directory is the main YAML file for the role.
-
-* The tests directory contains a sample YAML playbook file and a sample inventory file and is mostly used for testing purposes before creating the actual role.
-
-* The vars directory contains the YAML file in which all the variables used by the role will be defined. The directory templates and the directory files should contain files and templates that will be used by the tasks in the role.
 
 ## Ansible Variables
 
@@ -537,133 +444,103 @@ Both will reference the same value "one". But, if you choose to use dot notation
 
 ### Examples
 
-```
-
-- hosts : <your hosts>   
-vars:  
-tomcat_port : 8080 
 
 ```
+---
+- name: Install packages
+  hosts: all
+  become: yes
+  vars:
+    ec2_instance_id: "i-0786c3d298aaa22e0"
+  tasks:
+    - name: Display instance ID
+      debug:
+        msg: "Instance ID: {{ ec2_instance_id }}"
 
-In the above example, defined a variable name tomcat_port and assigned the value 8080 to the variable and can use it in your playbook wherever required.
-
-The below code is from one of the roles (install-tomcat), such as:
-
-```
-
-block:   
-   - name: Install Tomcat artifacts   
-      action: >   
-      yum name = "demo-tomcat-1" state = present   
-      register: Output   
-            
-   always:   
-      - debug:   
-         msg:   
-            - "Install Tomcat artifacts task ended with message: {{Output}}"   
-            - "Installed Tomcat artifacts - {{Output.changed}}"   
 
 ```
+
+![vars](/images/vars.png)
 
 **Explanation**
 
-* **block**: The Ansible syntax to execute a given block.
+1.The --- at the beginning indicates the start of a YAML document.
 
-* **name**: It is used in logging and helps in debugging which all blocks were successfully executed.
+2.The name field provides a descriptive name for the playbook. In this case, it's "Install packages."
 
-* **action**: The action is an Ansible keyword used in YAML.
+3.The hosts field specifies the group of hosts that the playbook will run against. In this case, it's the ansible_host group defined in the inventory file (inventory.ini). This means the playbook will run against the EC2 instance with the specified public IP address.
 
+4.The become field is set to yes, which means the playbook will run with elevated privileges (usually using the sudo command) to perform tasks that require administrative access.
 
-* **register**: The output of the action tag is registered by using the register keyword.
+5.The vars field is used to define variables specific to this playbook. In this example, we define a variable named ec2_instance_id and set it to <your_ec2_instance_id>. You should replace <your_ec2_instance_id> with the actual ID of your EC2 instance.
 
-* **always**: It is also an Ansible keyword; it says that below will still be executed.
+6.The tasks field contains a list of tasks that Ansible will execute on the target host(s).
 
+7.In this playbook, we have a single task with the name "Display instance ID." The debug module is used to print a message to the console. In this case, we display the value of the ec2_instance_id variable using the msg field.
 
-* **msg**: It displays the message.
+8.The {{ ec2_instance_id }} syntax is used to access the value of the ec2_instance_id variable within the message.
+
 
 ## Ansible Tags
 
-If you have a large playbook, it becomes useful to be able to run only a specific part of it rather than running everything in the playbook. Ansible supports a tag attribute for this reason.
+* In Ansible, tags are labels or identifiers that you can assign to tasks or plays in a playbook. 
 
-When you apply tags on things, then you can control whether they are executed by adding command-line options.
+* They provide a way to selectively run specific tasks or plays based on the tags assigned to them. 
 
-When you execute a playbook, you can filter tasks based on the tags in two ways, such as:
+* Tags are useful when you want to execute only a subset of tasks or plays in a playbook, rather than running the entire playbook.
 
-* On the command line, with the -tags or -skip-tags options.
+* In Ansible, tags can be applied to many structures, but its simplest use is with individual tasks. Let's see an example that tags three tasks with different tags, such as:
 
-* In Ansible configuration settings, with the TAGS_RUN and TAGS_SKIP options.
-
-In Ansible, tags can be applied to many structures, but its simplest use is with individual tasks. Let's see an example that tags two tasks with different tags, such as:
+**Example**
 
 ```
 
-tasks:  
-- yum:  
-    name: "{{ item }}"  
-    state: present  
-  loop:  
-  - httpd  
-  - memcached  
-  tags:  
-  - packages  
-  
-- template:  
-    src: templates/src.j2  
-    dest: /etc/foo.conf  
-  tags:  
-  - configuration
+---
+- name: Install packages on EC2 instance
+  hosts: server1
+  become: yes
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+      tags:
+        - package1
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+      tags:
+        - package2
+
+    - name: Install Python packages
+      apt:
+        name:
+        - python3
+        - python3-pip
+        - python3-dev
+        state: present
+      tags:
+        - package3
+
 
 ```
 
-if you want to run the configuration and packages part of a very long playbook, then you can use the -tags option on the command line.
+In this example, we have three tasks that install different packages on the EC2 instance on server1.
 
-```
+* The first task installs the nginx package.
 
-ansible-playbook example.yml --tags "configuration,packages"  
+* The second task installs the mysql-server package.
 
-```
+* The third task installs multiple packages related to Python development, including python3, python3-pip, and python3-dev.
 
-And if you want to run a playbook without certain tagged tasks, then you can use the -skip-tags command-line option.
+To run specific tasks or plays based on tags, you can use the --tags or --skip-tags options with the ansible-playbook command.
 
-```
+![tags](/images/tags.png)
 
-ansible-playbook example.yml --skip-tags "packages"  
+### Tags
 
-```
-
-### Tag Reuse
-
-We can apply the same tag to more than one task. By using the "--tags" command line options, all tasks with that tag name will be run.
-
-**For example**: In below example, we use one tag "ntp" for several tasks, such as:
-
-```
-
----  
-# file: roles/common/tasks/main.yml  
-  
-- name: be sure ntp is installed  
-  yum:  
-    name: ntp  
-    state: present  
-  tags: ntp  
-  
-- name: be sure ntp is configured  
-  template:  
-    src: ntp.conf.j2  
-    dest: /etc/ntp.conf  
-  notify:  
-  - restart ntpd  
-  tags: ntp  
-  
-- name: be sure ntpd is running and enabled  
-  service:  
-    name: ntpd  
-    state: started  
-    enabled: yes  
-  tags: ntp 
-
-```
 
 **Special Tags**
 
@@ -711,98 +588,6 @@ Here are another three special keywords for tags:
 "**all**" which run all tasks respectively.
 
 By default, Ansible runs as if "**--tags**" all had been specified.
-
-## Ansible Galaxy
-
-Ansible Galaxy is a galaxy website where users can share roles and to a command-line tool for installing, creating, and managing roles.
-
-Ansible Galaxy gives greater visibility to one of Ansible's most exciting features, such as application installation or reusable roles for server configuration. Lots of people share roles in the Ansible Galaxy.
-
-Ansible roles consist of many playbooks, which is a way to group multiple tasks into one container to do the automation in a very effective manner with clean, directory structures.
-
-**Ansible Galaxy Commands**
-
-Here are some helpful Ansible Galaxy commands, such as:
-
-**To display the list of installed roles, with version numbers.**
-
-```
-
-ansible-galaxy list  
-
-```
-
-**To remove an installed role.**
-
-```
-
-ansible-galaxy remove [role] 
-
-```
-
-**To create a role template suitable for submission to Ansible Galaxy.**
-
-```
-
-ansible-galaxy init
-
-```
-
-### Create Roles with Ansible Galaxy
-
-* The Ansible Galaxy is essentially a large public repository of Ansible roles. Roles ship with READMEs detailing the roles use and variables. 
-
-* Ansible Galaxy contains a large number of roles that are continually evolving and increasing.
-
-* The Galaxy can use Git to add other role sources like GitHub. 
-
-* You can initialize a new galaxy role using the ansible-galaxy init or install a role directly from the Ansible galaxy role store by executing the ansible-galaxy install <name of role> command.
-
-* To create an Ansible role using the Ansible Galaxy, you need to use the ansible-galaxy command and its templates. 
-
-* Roles must be downloaded before they used in the playbooks. They are placed into the default directory that is /etc/ansible/roles.
-
-**Create Collections**
-
-Ansible Galaxy has been a tool for constructing and managing roles with new iterations of the Ansible, and you are bound to see changes or additions. On Ansible version 2.8, you get the unique feature of the collections.
-
-Collections are the distribution format for the Ansible content. They can be used to package and distribute roles, modules, playbooks, and plugins.
-
-Collections follow the following simple structure:
-
-```
-
-collection/   
-├── docs/   
-├── galaxy.yml   
-├── plugins/   
-│ ├── modules/   
-│ │ └── module1.py   
-│ ├── inventory/   
-│ └── .../   
-├── README.md   
-├── roles/   
-│ ├── role1/   
-│ ├── role2/   
-│ └── .../   
-├── playbooks/   
-│ ├── files/   
-│ ├── vars/   
-│ ├── templates/   
-│ └── tasks/   
-└── tests/ 
-
-```
-
-The ansible-galaxy-collection command implements the following commands. Some commands are the same as used with ansible-galaxy, such as:
-
-* **init**: It creates a basic collection Skeleton based on the default template included with Ansible or your own template.
-
-* **build**: It creates a collection artifact that can be uploaded to the galaxy or your own repository.
-
-* **publish**: It publishes a built connection artifact to the galaxy.
-
-* **install**: It installs one or more connections.
 
 ## Ansible Modules
 
@@ -858,6 +643,185 @@ ansible-doc yum
 
 ```
 
+## Ansible Roles
+
+* Roles provide a framework for fully independent or interdependent collections of files, tasks, templates, variables, and modules.
+
+* The role is the primary mechanism for breaking a playbook into multiple files. This simplifies writing complex playbooks and makes them easier to reuse. The breaking of the playbook allows you to break the playbook into reusable components.
+
+* Each role is limited to a particular functionality or desired output, with all the necessary steps to provide that result either within the same role itself or in other roles listed as dependencies.
+
+* Roles are not playbooks. Roles are small functionality that can be used within the playbooks independently. Roles have no specific setting for which hosts the role will apply.
+
+* Top-level playbooks are the bridge holding the hosts from your inventory file to roles that should be applied to those hosts.
+
+### Creating a Role
+
+The directory structure for roles is essential to creating a new role, such as:
+
+**Role Structure**
+
+The roles have a structured layout on the file system. You can change the default structured of the roles as well.
+
+**For example**, let us stick to the default structure of the roles. 
+
+```
+
+playbooks/
+├── install_packages/
+│   └── tasks/
+│       └── main.yml
+└── install.yml
+
+```
+
+1.Update the tasks/main.yml file in the install_packages role with the following content:
+
+```
+
+---
+- name: Install packages
+  become: yes
+  apt:
+    name: "{{ packages }}"
+    state: present
+
+```
+
+2.Create the roles.yml playbook file with the following content:
+
+```
+
+---
+- name: Install packages on EC2 instance
+  hosts: ansible_host
+  become: yes
+  roles:
+    - install_packages
+
+```
+
+3.Create the vars/main.yml file in the install_packages role with the following content:
+
+```
+
+---
+packages:
+  - nginx
+  - mysql-server
+  - python3
+  - python3-pip
+  - python3-dev
+
+```
+
+Run the playbook using the ansible-playbook command:
+
+```
+
+ansible-playbook roles.yml -i /home/ubuntu/ansible/hosts   --private-key=~/.ssh/ansible_key
+
+```
+
+![roles](/images/roles.png)
+
+
+### Explanation
+
+The directory structure is organized as follows:
+
+```
+
+playbooks/
+├── install_packages/
+│   └── tasks/
+│       └── main.yml
+└── install.yml
+
+```
+The install_packages directory represents the role, containing the tasks directory, which contains the main.yml file. The install.yml file is the playbook file.
+
+
+* The tasks/main.yml file within the install_packages role contains the task that installs packages. It uses the apt module to install packages specified in the packages variable. The **become**: yes line allows the task to run with elevated privileges.
+
+* The roles.yml playbook file is responsible for orchestrating the installation of packages on the EC2 instance. It specifies the playbook name, the target hosts (server1), and that privileged access is required (become: yes). The roles section includes the install_packages role, which will be executed as part of the playbook.
+
+* The vars/main.yml file within the install_packages role contains the packages variable, which is a list of packages to be installed. In this case, it includes the package names nginx, mysql-server, python3, python3-pip, and python3-dev.
+
+* When you run the ansible-playbook command, make sure you execute it from the playbooks directory. The playbook will execute the install_packages role and install the specified packages on the EC2 instance specified in the inventory file.
+
+By organizing the tasks, variables, and files into roles, you can modularize your Ansible code, making it reusable and easier to maintain.
+
+## Ansible Galaxy
+
+Ansible Galaxy is a galaxy website where users can share roles and to a command-line tool for installing, creating, and managing roles.
+
+Ansible Galaxy gives greater visibility to one of Ansible's most exciting features, such as application installation or reusable roles for server configuration. Lots of people share roles in the Ansible Galaxy.
+
+Ansible roles consist of many playbooks, which is a way to group multiple tasks into one container to do the automation in a very effective manner with clean, directory structures.
+
+**Ansible Galaxy Commands**
+
+Here are some helpful Ansible Galaxy commands, such as:
+
+**To display the list of installed roles, with version numbers.**
+
+```
+
+ansible-galaxy list  
+
+```
+
+**To remove an installed role.**
+
+```
+
+ansible-galaxy remove [role] 
+
+```
+
+**To create a role template suitable for submission to Ansible Galaxy.**
+
+```
+
+ansible-galaxy init
+
+```
+
+### Example
+
+In this example we are going to apply Apache role to EC2 instance
+
+Make sure you have installed the geerlingguy.apache role using the ansible-galaxy command before running the playbook:
+
+```
+
+ansible-galaxy install geerlingguy.apache
+
+```
+
+![galaxy](/images/galaxy1.png)
+
+Ensure that the role is successfully installed and located in the proper location.
+
+Create a yml file in the playbook and run the following command:
+
+```
+
+---
+- name: Apply Apache role to EC2 instance
+  hosts: server3
+  become: yes
+  roles:
+    - geerlingguy.apache
+
+```
+
+This should apply the geerlingguy.apache role to the EC2 instance.
+
+![galaxy](/images/galaxy2.png)
+
+
 ## Ansible Shell
 
 * Ansible shell module is designed to execute the shell commands against the target UNIX based hosts. Ansible can run except any high complexes commands with pipes, redirection. And you can also perform the shell scripts using the Ansible shell module.
@@ -886,91 +850,53 @@ The below image shows a quick syntax of the Ansible shell module in Adhoc manner
 
 ### Example
 
-To execute a single command in a single task using a Shell or command module. Suppose you want to get the date of the remote server. And the remote server is under the hostgroup which name is testservers.
+This example will execute the shell command on the specified remote host and display the output.
 
-**Step 1**: Login to the Ansible server.
-
-**Step 2**: Below is an example that executes a single command using the Shell module in a remote host.
+ Below is an example that executes a single command using the Shell module in a remote host.
 
 ```
 
----  
--name: Shell command example   
-Hosts: testservers  
-tasks:  
--name: check date with the shell command  
-shell:  
-"date"  
-register: datecmd  
-tags: datecmd  
--debug: msg= "{{datecmd.stdout}}"
+---
+- name: Execute Shell command on remote host
+  hosts: server2
+  become: yes
+  tasks:
+    - name: Run Shell command
+      shell: echo "Hello, world!"
+      register: result
+
+    - name: Display command output
+      debug:
+        var: result.stdout
+
 
 ```
 
-In the above example, we are running our playbook against a hostgroup named testservers and executing a simple date command and saving the output of that command into a Register variable named datecmd.
+In this example:
 
-At the last line, we retrieve the registered variable and printing only the date command output stored in the stdout property of datecmd.
+* The shell module is used to execute the echo command on the remote host, which simply prints "Hello, world!".
 
-### Example 2: Execute multiple commands in a single shell:
+* The register keyword is used to capture the output of the shell command into the result variable.
 
-The Shell can accept various commands together in a single shell play. Also, you can write your shell script with the Ansible shell module.
+* The debug module is used to display the value of result.stdout, which contains the standard output of the shell command.
 
-In the below example, we grouped some shell commands to execute a controlled and clean tomcat restart.
+![shell](/images/shell.png)
 
-The playbook is designed to execute the following steps in order, such as:
+**Note:**
 
-* Stop the tomcatServer
+However, it's worth noting that whenever possible, it is recommended to use Ansible's idempotent modules (such as apt, copy, service, etc.) that are specifically designed to manage various aspects of system configuration. The shell module should be used sparingly when there is no suitable existing module available.
 
-* Clear the cache
 
-* Truncate the log file
-
-* Start the instance
-
-```
-
----  
-  - name: Shell Examples  
-    hosts: testservers  
-    tasks:  
-    - name: Clear Cache and Restart tomcat  
-      become: yes  
-      delay: 10  
-      async: 10  
-      poll: 50  
-      shell: |  
-        echo -e "\n Change directory to the Tomcat"  
-        cd tomcat8/  
-        echo -e "\n Present working directory is" `pwd`  
-          
-        echo -e "\n Stopping the tomcat instance"  
-        bin/shutdown.sh  
-        echo -e "\n Clearning the tmp and work directory of tomcat"  
-        rm -rfv tmp/*  
-        rm -rfv work/*  
-        echo -e "\nTruncate the log file"  
-        > logs/catalina.out  
-        echo -e "\nDirectory listing"  
-        ls -lrtd logs/catalina.out  
-        echo -e "\nStarting the instance"  
-        bin/startup.sh      
-      args:  
-        chdir: "/apps/tomcat/"  
-      register: fileout  
-      tags: fileout   
-    - debug: msg="{{ fileout.stdout_lines }}" 
-
-```
 
 ## Ansible Templates
 
-Ansible is used to manage configurations of multiple servers and environments. But these configuration files can vary for each cluster or remote server. But apart from a few parameters, all other settings will be the same.
+* Ansible is used to manage configurations of multiple servers and environments. But these configuration files can vary for each cluster or remote server. But apart from a few parameters, all other settings will be the same.
 
-Creating static files for each of these configurations is not an efficient solution. It will take a lot of time, and every time a new cluster is added, then you have to add more files. If there is an efficient way to manage these dynamic values, it would be beneficial. This is where Ansible template modules come into play.
+* Creating static files for each of these configurations is not an efficient solution. It will take a lot of time, and every time a new cluster is added, then you have to add more files. If there is an efficient way to manage these dynamic values, it would be beneficial. This is where Ansible template modules come into play.
 
-A template is a file that contains all your configuration parameters, but the dynamic values are given as variables in the Ansible. During the playbook execution, it depends on the conditions such as which cluster you are using, and the variables will be replaced with the relevant values.
+* A template is a file that contains all your configuration parameters, but the dynamic values are given as variables in the Ansible. During the playbook execution, it depends on the conditions such as which cluster you are using, and the variables will be replaced with the relevant values.
 
-You can do more than replacing the variables with the help of the Jinj2 templating engine. You can have loops, conditional statements, write macros, filters for transforming the data, do arithmetic calculations, etc.
+* You can do more than replacing the variables with the help of the Jinj2 templating engine. You can have loops, conditional statements, write macros, filters for transforming the data, do arithmetic calculations, etc.
 
 Usually, the template files will have the .j2 extension, which denotes the Jinja2 templating engine used.
 
@@ -1336,22 +1262,36 @@ Ansible version 2.1 extended the debug module with a verbosity parameter that tr
 
 ```
 
----  
-- name: Debug Example Uptime  
-hosts: localhost  
-connection: local  
-   
-tasks:  
-- name: Find Uptime  
-shell: /usr/bin/uptime  
-register: result  
-   
-- name: Print debug message  
-debug:  
-var: result  
-verbosity: 2  
+---
+- name: Debug Example
+  hosts: server2
+  become: yes
+  tasks:
+    - name: Print debug message
+      debug:
+        msg: "This is a debug message."
+
+    - name: Set a variable
+      set_fact:
+        my_var: "Hello, world!"
+
+    - name: Print variable value
+      debug:
+        var: my_var
+  
 
 ```
+
+In this example:
+
+* The debug module is used to print a debug message "This is a debug message." during playbook execution.
+
+* The set_fact module is used to set a variable my_var with the value "Hello, world!".
+
+* The debug module is used again to print the value of the my_var variable.
+
+![debug](/images/debug.png)
+
 
 During the Ansible playbook debugging, it is useful to know how to display the registered variables or host facts.
 
@@ -1371,9 +1311,11 @@ debug:
 ```
 the Ansible includes a debugger as a part of the strategy plugins. This debugger enables you to debug as a task. You have access to all the features of the debugger in the context of the task. You can check or set the value of variables, update module arguments, and re-run the task with the new variables and arguments to resolve the cause of the failure.
 
-**There are many ways to invoke the debugger, such as:**
 
-**Using the debugger Keyword**
+
+###  Debugger Keyword 
+
+**There are many ways to invoke the debugger, such as:**
 
 The debugger keyword can be used on any block where you provide a name attribute such as a role, block, task, or play.
 
@@ -1448,19 +1390,34 @@ The below example will do a cache update to synchronize the index. Check if the 
 
 ```
 
--hosts: loc  
-tasks:  
--name: Ansible apt install packages   
-apt:  
-name: zip  
-state: present  
-update_cache: true
+---
+- name: Manage Packages
+  hosts: server2
+  become: yes
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+    - name: Install zip package
+      apt:
+        name: zip
+        state: present
+
 
 ```
 
+![apt](/images/apt.png)
+
+In this example:
+
+* The apt module is used to update the package cache on the remote host by setting update_cache to yes. This ensures that the package indexes are synchronized with the sources list.
+
+* The apt module is used again to install the package zip by setting name to zip and state to present. This will install the package if it's not already installed. If the package is already present, it won't be upgraded.
+
 ### Installing new Apt Packages
 
-1.Installing the latest version of a package
+1.**Installing the latest version of a package**
 
 If you set the state of the packages to "present", then Ansible will only check if the package is present. So if the new package is available, it will not be able to install.
 
@@ -1470,7 +1427,7 @@ This will ensure the package with the latest version is installed. The below exa
 
 ```
 
--hosts: loc  
+-hosts: server 
 tasks:  
 -name: ansible apt install latest version  
 apt:  
@@ -1480,7 +1437,7 @@ update_cache: true
 
 ```
 
-2.Ansible install multiple packages
+2.**Ansible install multiple packages**
 
 Instead of writing multiple tasks to install packages, you can use with_items and combine those tasks.
 
@@ -1488,7 +1445,7 @@ In the below example, we are going to install 3 packages: docker-ce, Nginx, and 
 
 ```
 
--hosts: loc  
+-hosts: server 
 tasks:  
 -name: ansible apt with_items   
 apt:  
@@ -1501,7 +1458,7 @@ with_items:
 -'git'
 
 ```
-3.Ansible Apt ad-hoc
+3.**Ansible Apt ad-hoc**
 
 You can also use the ad-hoc method to install new packages using the apt module, such as:
 
@@ -1519,7 +1476,7 @@ The below example will remove the zip package. Since the module is idempotent, i
 
 ```
 
--hosts: loc  
+-hosts: server 
 tasks:  
 -name: ansible apt remove package   
 apt:  
@@ -1528,3 +1485,319 @@ state: absent
 
 ```
 
+## Ansible Lineinfile
+
+* The lineinfile is one of the most powerful modules in the Ansible toolbox. Ansible lineinfile module is used to insert a line, modify, remove, and replace an existing line.
+
+* Ansible lineinfile module saves your time when you work with the file and modify their content on the run, such as adding a new line in the file or updating, replace a line in the file when specific text is found, and much more.
+
+* Ansible lineinfile provides many parameters to do the job quickly. You can also use the condition to match the line before modifying, removing using the regular expressions. You can reuse and modify the matched line using the backreference parameter.
+
+**NOTE**: Ansible lineinfile can be used only for working a single line in a file. If you want to replace multiple lines, replace the module, and if you're going to insert, update, remove a block of lines in a file use blockinfile module.
+
+**Insert a Line**
+
+lets see how to insert a Line in a file in the targeted hosts
+
+```
+
+---
+- name: Insert Line in File
+  hosts: server1
+  become: yes
+  tasks:
+    - name: Insert line in file
+      lineinfile:
+        path: /home/ubuntu/file.txt
+        line: "This line will be inserted"
+        insertafter: '^Specific line'
+ 
+
+```
+
+![lif](/images/lif1.png)
+
+to check whether it is inserted or not u can check the host by executing the following command as shown in image:
+
+![lif](/images/lif2.png)
+
+In this example:
+
+* The lineinfile module is used to insert the line "This line will be inserted" into the file /home/ubuntu/file.txt.
+
+* The insertafter parameter specifies that the line should be inserted after the line matching the regular expression ^Specific line. Modify ^Specific line with the appropriate regular expression to identify the specific line after which you want to insert the new line.
+
+
+### Removig a line
+
+Set the state parameter to absent or remove the line specified. All the occurrence of that line will be removed.
+
+```
+
+---
+- name: Remove Line from File
+  hosts: server1
+  become: yes
+  tasks:
+    - name: Remove line from file
+      lineinfile:
+        path: /home/ubuntu/file.txt
+        state: absent
+        line: "This line will be inserted"
+
+
+```
+
+![lif](/images/lif3.png)
+
+u can see the line inserted in the previous example has been deleted
+
+![lif](/images/lif4.png)
+
+In this example:
+
+* The lineinfile module is used to remove the line "This line will be inserted" from the file /home/ubuntu/file.txt.
+
+* The state parameter is set to absent to indicate that the line should be removed from the file.
+
+
+
+### Replacing or Modifying a Line
+
+To modify a line, you need to use the Ansible backrefs parameter along with the regexp parameter. This should be used with state=present.
+
+If the regexp does not match any line, then the file is not changed. If the regexp matches a line or multiple lines, then the last matched line will be replaced. The grouped elements in regexp are populated and can be used for modification.
+
+
+
+```
+
+---
+- name: Replace Line in File
+  hosts: server1
+  become: yes
+  tasks:
+    - name: Replace line in file
+      lineinfile:
+        path: /home/ubuntu/file.txt
+        regexp: '^This line will be inserted'
+        line: "This line has been replaced"
+ 
+
+```
+
+![lif](/images/lif5.png)
+
+u can see the above line has been replace/modified
+
+![lif](/images/lif6.png)
+
+In this example:
+
+* The lineinfile module is used to replace the line that starts with "This line will be inserted" with "This line has been replaced" in the file /home/ubuntu/file.txt
+
+* The regexp parameter is used to specify the regular expression that matches the line to be replaced.
+The line parameter is set to the new line that will replace the existing line.
+
+## Ansible Copy
+
+The copy module is used to copy files from the local machine (the control node where Ansible is being run) to the remote hosts. It provides various options for copying files, setting permissions, and modifying ownership.
+
+If you want to copy files after substituting with variables, such as config files with IP changes, or you can use the template module also. You can perform a lot of complicated tasks with this module.
+
+Copying Files from server to Remote
+
+**Example:**
+
+```
+
+---
+- name: Copy File to EC2 Instances
+  hosts: server1
+  become: yes
+  tasks:
+    - name: Copy file to remote hosts
+      copy:
+        src: /home/ubuntu/copyfile.yml/text.txt
+        dest: /home/ubuntu/
+
+```
+
+![copy](/images/copy1.png)
+
+The text file which is present in the src path is copied to the targeted hosts
+
+![copy](/images/copy2.png)
+
+In this example:
+
+* The copy module is used to copy the file from the local machine to the remote hosts .
+
+* The src parameter specifies the path to the source file on the local machine (control node).
+
+* The dest parameter specifies the path to the destination file on the remote hosts .
+
+## Ansible File
+
+Ansible file module is used to creating and deleting the file or multiple files in the remote server. You can also create and delete the directories and change the permissions of the data.
+
+**Creating a File in Remote Server**
+
+```
+
+---
+- name: Create File on Remote Server
+  hosts: server1
+  become: yes
+  tasks:
+    - name: Create file
+      file:
+        path: /home/ubuntu/newfile.txt
+        state: touch
+
+```
+
+![file](/images/file.png)
+
+This will create a newfile.txt file in targeted  Hosts/Remote server.
+
+![file](/images/file2.png)
+
+In this example:
+
+* The file module is used to create a file on the remote server.
+
+* The path parameter specifies the path and filename for the remote file.
+
+* The state parameter is set to touch to indicate that the file should be created if it doesn't exist.
+
+**Delete a file**
+
+```
+
+---
+- name: Delete File on Remote Server
+  hosts: server1
+  become: yes
+  tasks:
+    - name: Delete file
+      file:
+        path: /home/ubuntu/file.txt
+        state: absent
+
+```
+
+![file](/images/file6.png)
+
+
+In this example:
+
+* The file module is used to delete a file on the remote server.
+
+* The path parameter specifies the path and filename of the file to be deleted.
+
+* The state parameter is set to absent to indicate that the file should be deleted.
+
+
+
+### Creating File with Permissions
+
+We can also create the file with permission by using the file module.
+
+At the mode parameter: we have 4 digits. Always mention zero at the starting, and remaining digits will be your file permissions.
+
+```
+
+---
+- name: Create File on Remote Server
+  hosts: remote_server
+  become: yes
+  tasks:
+    - name: Create file
+      file:
+        path: /home/ubuntu/permission.txt
+        state: touch
+        mode: "0644"
+
+```
+
+![file](/images/file.png)
+
+![file](/images/file4.png)
+
+In this example:
+
+* The file module is used to create a file on the remote server.
+
+* The path parameter specifies the path and filename for the remote file.
+
+* The state parameter is set to touch to indicate that the file should be created if it doesn't exist.
+
+* The mode parameter is set to "0644" to specify the desired file permissions. The 0 prefix is used to indicate an octal value.
+
+**Creating Multiple Files**
+
+A path parameter: we can create a loop to create multiple files by using "{{item}}".
+
+```
+
+---
+- name: Create Multiple Files on Remote Server
+  hosts: remote_server
+  become: yes
+  tasks:
+    - name: Create files
+      file:
+        path: "{{ item }}"
+        state: touch
+        mode: "0644"
+      loop:
+        - /path/to/remote/file1.txt
+        - /path/to/remote/file2.txt
+        - /path/to/remote/file3.txt
+
+```
+
+In this example:
+
+* The file module is used within a loop to create multiple files on the remote server.
+
+* The path parameter is set dynamically using the item variable, which represents each item in the loop.
+
+* The state parameter is set to touch to indicate that the file should be created if it doesn't exist.
+
+* The mode parameter is set to "0644" to specify the desired file permissions.
+
+Make sure to replace remote_server with the appropriate host or host group name in your inventory file. Also, update the paths in the loop (/path/to/remote/file1.txt, /path/to/remote/file2.txt, etc.) with the actual paths and filenames for the files you want to create on the remote server.
+
+**Deleting Multiple Files**
+
+To delete multiple files on a remote server using Ansible, you can utilize the file module with the state parameter set to absent. 
+
+```
+
+---
+- name: Delete Multiple Files on Remote Server
+  hosts: remote_server
+  become: yes
+  tasks:
+    - name: Delete files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /path/to/remote/file1.txt
+        - /path/to/remote/file2.txt
+        - /path/to/remote/file3.txt
+
+```
+
+In this example:
+
+* The file module is used within a loop to delete multiple files on the remote server.
+
+* The path parameter is set dynamically using the item variable, which represents each item in the loop.
+
+* The state parameter is set to absent to indicate that the files should be deleted.
+
+Make sure to replace remote_server with the appropriate host or host group name in your inventory file. Also, update the paths in the loop (/path/to/remote/file1.txt, /path/to/remote/file2.txt, etc.) with the actual paths and filenames of the files you want to delete on the remote server.

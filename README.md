@@ -266,6 +266,12 @@ Ansible will be installed in the Current instance.
 
 ![connect](/images/c6.png)
 
+* To make an SSH key file readable in an AWS instance use the command 
+
+**chmod 400 /path/to/your/key.pem**
+
+* Replace /path/to/your/key.pem with the actual path to your SSH key file.
+
 * Once u have  key pair u can connect to other server by connecting it's IP adress as shown in image:
 
 **ssh -i ~/.ssh/ansible_key ubuntu@IP**

@@ -793,9 +793,10 @@ The directory structure is organized as follows:
 playbooks/
 ├── install_packages/
 │   └── tasks/
-│       └── main.yml
-    
-└── roles.yml
+│   |    └── main.yml
+|   └── vars/
+|          └──main.yml
+└── install.yml
 
 ```
 The  install_packages directory represents the role, containing the tasks directory, which contains the main.yml file. The install.yml file is the playbook file.

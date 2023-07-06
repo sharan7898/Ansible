@@ -727,7 +727,7 @@ playbooks/
 ├── install_packages/
 │   └── tasks/
 │       └── main.yml
-└── install.yml
+└── roles.yml
 
 ```
 

@@ -726,7 +726,9 @@ The roles have a structured layout on the file system. You can change the defaul
 playbooks/
 ├── install_packages/
 │   └── tasks/
-│       └── main.yml
+│   |    └── main.yml
+|   └── vars/
+|          └──main.yml
 └── roles.yml
 
 ```

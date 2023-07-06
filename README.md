@@ -1487,7 +1487,7 @@ Run the Playbook by following command
 
 ```
 
-ansible—playbook create_file.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+ansible—playbook apt.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
 
 ```
 

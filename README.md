@@ -100,8 +100,6 @@ Here are some important terms which are used in Ansible, such as:
 |Fact	 |The information fetched from the client system from the global variables with the gather facts operation.|
 |Inventory|	A file containing the data regarding the Ansible client-server.|
 |Play	  |It is the execution of the playbook.|
-|Handler  |The task is called only if a notifier is present.|
-|Notifier |	The section attributed to a task which calls a handler if the output is changed.|
 |Tag	  |It is a name set to a task that can be used later on to issue just that specific task or group of jobs.|
 
 ## Ansible Architecture
@@ -196,6 +194,10 @@ Type sudo su and enter the password
 
 U can refer the video for installing the Ansible on Windows 11 : https://www.youtube.com/watch?v=OhCbpGBOACs&t=309s
 
+U can refer the video for installing the Ansible on docker : https://www.youtube.com/watch?v=Sf8urGA-Yhs&ab_channel=RedAakash
+
+For more refer the Official document of Ansible : https://docs.ansible.com/ansible/latest/installation_guide/index.html
+
 
 ## Setup Environment in AWS
 
@@ -251,7 +253,12 @@ Ansible will be installed in the Current instance.
 
 ### Connecting with servers
 
-* In order to connect with other server youu need to have an ssh in the instance.can create by following the below steps
+* In order to connect with other server you need to have an ssh in the instance.can create by following the below steps
+
+**cd .ssh**
+
+**vim ansible_key**
+
 
 ![connect](/images/c5.png)
 
@@ -260,6 +267,8 @@ Ansible will be installed in the Current instance.
 ![connect](/images/c6.png)
 
 * Once u have  key pair u can connect to other server by connecting it's IP adress as shown in image:
+
+**ssh -i ~/.ssh/ansible_key ubuntu@IP**
 
 ![connect](/images/c7.png)
 
@@ -309,19 +318,27 @@ ansible <hosts> [-m <module_name>] -a <"arguments"> -u <username> [--become]
 
 Will Create first Ansible ad hoc command and at the same time validate that our inventory is configured as expected. Let’s go ahead and execute a ping command against all our hosts:
 
+**ansible all -m ping -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key**
+
 ![adhoc](/images/adhoc1.png)
 
 seems like we can successfully ping the 3 hosts that we have defined in our hosts file.
 
 Next, run a live command only to the server1 node by using the **–limit** flag
 
+**ansible all -i /home/ubuntu/ansible/hosts --limit server1 -a "/bin/echo hello" --private-key=~/.ssh/ansible_key**
+
 ![adhoc](/images/adhoc2.png)
 
 Next will run a command to check the Memory Usage
 
+**ansible all -a "free-h"  -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key**
+
 ![adhoc](/images/adhoc3.png)
 
 Run a command to check the servers **uptime**
+
+ansible servers -a "uptime"  -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key
 
 ![adhoc](/images/adhoc4.png)
 
@@ -354,13 +371,19 @@ A YAML starts with --- (3 hyphens) always.
 
 Lets Create a directory inside a master server where ansible is installed 
 
+**mkdir playbooks**
+
 ![pb1](/images/PB1.png)
 
 Change to the Playbook directory
 
+**cd playbooks**
+
 ![pb2](/images/PB2.png)
 
 Create a file with .yml or .yaml extension
+
+**Vim create_file.yml**
 
 ![pb3](/images/PB3.png)
 
@@ -385,6 +408,14 @@ Let's start by writing an example YAML file. First, we must define a task. These
 ```
 
 Above is a basic syntax of a playbook. Save it in a file as create_file.yml. A YAML syntax needs to follow the correct indentation.
+
+Run the Playbook by following command
+
+```
+
+ansible—playbook create_file.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
 
 ![pb4](/images/PB4.png)
 
@@ -459,6 +490,16 @@ Both will reference the same value "one". But, if you choose to use dot notation
 
 
 ```
+
+Run the Ansible Playbook by following command
+
+```
+
+ansible—playbook variable.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
+
+
 
 ![vars](/images/vars.png)
 
@@ -536,6 +577,14 @@ In this example, we have three tasks that install different packages on the EC2 
 * The third task installs multiple packages related to Python development, including python3, python3-pip, and python3-dev.
 
 To run specific tasks or plays based on tags, you can use the --tags or --skip-tags options with the ansible-playbook command.
+
+Run the Ansible Playbook by following command
+
+```
+
+ansible—playbook variable.yml --tags all  -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
 
 ![tags](/images/tags.png)
 
@@ -643,6 +692,8 @@ ansible-doc yum
 
 ```
 
+For more details on module refer official documentation:https://docs.ansible.com/ansible/latest/module_plugin_guide/index.html
+
 ## Ansible Roles
 
 * Roles provide a framework for fully independent or interdependent collections of files, tasks, templates, variables, and modules.
@@ -736,10 +787,11 @@ playbooks/
 ├── install_packages/
 │   └── tasks/
 │       └── main.yml
-└── install.yml
+    
+└── roles.yml
 
 ```
-The install_packages directory represents the role, containing the tasks directory, which contains the main.yml file. The install.yml file is the playbook file.
+The  install_packages directory represents the role, containing the tasks directory, which contains the main.yml file. The install.yml file is the playbook file.
 
 
 * The tasks/main.yml file within the install_packages role contains the task that installs packages. It uses the apt module to install packages specified in the packages variable. The **become**: yes line allows the task to run with elevated privileges.
@@ -879,6 +931,14 @@ In this example:
 * The register keyword is used to capture the output of the shell command into the result variable.
 
 * The debug module is used to display the value of result.stdout, which contains the standard output of the shell command.
+
+Run the Playbook by following command
+
+```
+
+ansible—playbook shell.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
 
 ![shell](/images/shell.png)
 
@@ -1258,7 +1318,7 @@ Ansible provides a debug module option that makes the tasks more manageable. It 
 
 Ansible version 2.1 extended the debug module with a verbosity parameter that transforms it from a print line.
 
-**For example**: Let's create the playbook 1_debug_example.yml, such as:
+**For example**: Let's create the playbook debug.yml, such as:
 
 ```
 
@@ -1289,6 +1349,14 @@ In this example:
 * The set_fact module is used to set a variable my_var with the value "Hello, world!".
 
 * The debug module is used again to print the value of the my_var variable.
+
+Run the Playbook by following command
+
+```
+
+ansible—playbook debug.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
 
 ![debug](/images/debug.png)
 
@@ -1407,6 +1475,14 @@ The below example will do a cache update to synchronize the index. Check if the 
 
 ```
 
+Run the Playbook by following command
+
+```
+
+ansible—playbook create_file.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
+
 ![apt](/images/apt.png)
 
 In this example:
@@ -1515,9 +1591,25 @@ lets see how to insert a Line in a file in the targeted hosts
 
 ```
 
+Run the Playbook by following command
+
+```
+
+ansible—playbook insertline.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
+
 ![lif](/images/lif1.png)
 
 to check whether it is inserted or not u can check the host by executing the following command as shown in image:
+
+Run the Playbook by following command
+
+```
+
+ansible—playbook insertline.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
 
 ![lif](/images/lif2.png)
 
@@ -1545,6 +1637,14 @@ Set the state parameter to absent or remove the line specified. All the occurren
         state: absent
         line: "This line will be inserted"
 
+
+```
+
+Run the Playbook by following command
+
+```
+
+ansible—playbook insertline.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
 
 ```
 
@@ -1586,6 +1686,15 @@ If the regexp does not match any line, then the file is not changed. If the rege
 
 ```
 
+Run the Playbook by following command
+
+```
+
+ansible—playbook insertline.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
+
+
 ![lif](/images/lif5.png)
 
 u can see the above line has been replace/modified
@@ -1623,6 +1732,14 @@ Copying Files from server to Remote
 
 ```
 
+Run the Playbook by following command
+
+```
+
+ansible—playbook copy.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
+
 ![copy](/images/copy1.png)
 
 The text file which is present in the src path is copied to the targeted hosts
@@ -1654,6 +1771,14 @@ Ansible file module is used to creating and deleting the file or multiple files 
       file:
         path: /home/ubuntu/newfile.txt
         state: touch
+
+```
+
+Run the Playbook by following command
+
+```
+
+ansible—playbook file.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
 
 ```
 

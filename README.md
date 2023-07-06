@@ -1820,7 +1820,17 @@ In this example:
 
 ```
 
+Run the Playbook by following command
+
+```
+
+ansible—playbook file.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
+
 ![file](/images/file6.png)
+
+
 
 
 In this example:
@@ -1853,6 +1863,15 @@ At the mode parameter: we have 4 digits. Always mention zero at the starting, an
         mode: "0644"
 
 ```
+
+Run the Playbook by following command
+
+```
+
+ansible—playbook file.yml -i /home/ubuntu/ansible/hosts --private—key=~/.ssh/ansible_key
+
+```
+
 
 ![file](/images/file.png)
 

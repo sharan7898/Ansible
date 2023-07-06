@@ -280,6 +280,8 @@ Ansible will be installed in the Current instance.
 
 ![connect](/images/c12.png)
 
+Refer the video for Environment setup in aws : https://www.youtube.com/watch?v=SGB7EdiP39E&t=993s&ab_channel=TrainWithShubham
+
 
 ## Ansible ad-hoc Commands
 
@@ -399,9 +401,9 @@ Let's start by writing an example YAML file. First, we must define a task. These
 - name: This Playbook will create a file
   hosts: all
   become: true
-  task:
-- name: create a file
-  file:
+  tasks:
+  - name: create a file
+   file:
     path: /home/ubuntu/newfile.txt
     state: touch
 
@@ -425,6 +427,7 @@ You  will find the file in the targeted hosts:
 
 
 
+
 ### YAML Tags
 
 Here are some YAML tags are given below, such as:
@@ -435,6 +438,8 @@ Here are some YAML tags are given below, such as:
 | Hosts	    |It specifies the lists of the hosts against which you want to run the task. And the host's Tag is mandatory. It tells Ansible that on which hosts to run the listed tasks. These tasks can be run on the same machine or the remote machine. One can run the tasks on the multiple machines, and the host's tag can have a group of host's entry as well.|
 | Vars	    |Vars tag defines the variables which you can use in your playbook. Its usage is similar to the variables in any programming language.|
 | Tasks	    |Tasks are the lists of the actions which need to perform in the playbooks. All the playbooks should contain the tasks to be executed. A task field includes the name of the task. It is not mandatory but useful for debugging the playbook. Internally each task links to a piece of code called a module. A module should be executed, and arguments that are required for the module you want to run.|
+
+For more details on playbook refer official documentation: https://docs.ansible.com/ansible/latest/playbook_guide/index.html
 
 
 ## Ansible Variables
@@ -745,7 +750,7 @@ playbooks/
 
 ---
 - name: Install packages on EC2 instance
-  hosts: ansible_host
+  hosts: server2
   become: yes
   roles:
     - install_packages

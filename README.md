@@ -729,7 +729,7 @@ playbooks/
 │   |    └── main.yml
 |   └── vars/
 |          └──main.yml
-└── roles.yml
+└── install.yml
 
 ```
 
@@ -746,7 +746,7 @@ playbooks/
 
 ```
 
-2.Create the roles.yml playbook file with the following content:
+2.Create the install.yml playbook file with the following content:
 
 ```
 
@@ -777,7 +777,7 @@ Run the playbook using the ansible-playbook command:
 
 ```
 
-ansible-playbook roles.yml -i /home/ubuntu/ansible/hosts   --private-key=~/.ssh/ansible_key
+ansible-playbook install.yml -i /home/ubuntu/ansible/hosts   --private-key=~/.ssh/ansible_key
 
 ```
 

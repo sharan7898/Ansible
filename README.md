@@ -1959,3 +1959,65 @@ In this example:
 * The state parameter is set to absent to indicate that the files should be deleted.
 
 Make sure to replace remote_server with the appropriate host or host group name in your inventory file. Also, update the paths in the loop (/path/to/remote/file1.txt, /path/to/remote/file2.txt, etc.) with the actual paths and filenames of the files you want to delete on the remote server.
+
+## Install Docker in worker nodes
+
+To install a Docker on your worker nodes , create a playbook file name called docker.yml in ~/playbooks folder
+
+```
+---
+- name: Install Docker
+  hosts: server1
+  become: true
+  remote_user: ubuntu
+  
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      become: true
+
+    - name: Install Docker dependencies
+      apt:
+        name: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common']
+      become: true
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+        state: present
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      become: true
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+      become: true
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      become: true
+
+```
+
+Run the command to install docker on the worker nodes
+
+```
+
+sudo ansible-playbook docker.yml -i ~/hosts --private-key=/home/ubuntu/.ssh/ansible_key
+
+```
+

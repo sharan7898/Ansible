@@ -2021,3 +2021,68 @@ sudo ansible-playbook docker.yml -i ~/hosts --private-key=/home/ubuntu/.ssh/ansi
 
 ```
 
+## Build Images in Docker
+
+To Build images in  a Docker on your worker nodes , create a playbook file name called docker_build.yml in ~/playbooks folder
+
+```
+
+---
+- name: Build Docker Image
+  hosts: server1
+  become: true
+  remote_user: ubuntu
+  tasks:
+    - name: Clone GitHub repository
+      git:
+        repo: https://github.com/vijaynvb/todoapi.git
+        dest: /home/ubuntu/docker/todo
+
+    - name: Build Docker image
+      command: docker build -t todoapi .
+      args:
+        chdir: /home/ubuntu/docker/todo
+
+```
+
+Run the command to build an image in docker on the worker nodes
+
+```
+
+sudo ansible-playbook docker_build.yml -i ~/hosts --private-key=/home/ubuntu/.ssh/ansible_key
+
+```
+## Build Container in Docker
+
+To Build Container in  a Docker on your worker nodes , create a playbook file name called docker_container.yml in ~/playbooks folder
+
+```
+
+---
+- name: Run Docker Image
+  hosts: server1
+  become: true
+  remote_user: ubuntu
+  tasks:
+    - name: Run Docker container
+      docker_container:
+        name: my_container
+        image: todoapi
+        state: started
+        ports:
+          - "80:8081"
+
+```
+
+Run the command to build an container in docker on the worker nodes
+
+```
+
+sudo ansible-playbook docker_container.yml -i ~/hosts --private-key=/home/ubuntu/.ssh/ansible_key
+
+```
+
+
+
+
+

@@ -152,7 +152,11 @@ Open the windows PowerShell and run as administrator:
 
 **Step 1**: Install WSL
 
-**wsl --install**
+```
+
+wsl --install
+
+```
 
 ![step1](/images/step1.png)
 
@@ -168,27 +172,43 @@ Type sudo su and enter the password
 
 **Step 3** : Perform an update to the packages
 
-**apt-get update**
+```
+
+apt-get update
+
+```
 
 ![step4](/images/step4.png)
 
 **Step 4** :Then install the software properties common package.
 
-**apt install software-properties-common** 
+```
+
+apt install software-properties-common
+
+```
 
 ![step5](/images/step5.png)
 
 **Step 5** : And install the Ansible personal package archive.
 
-**$ sudo apt-add-repository ppa:ansible/ansible**
+```
+
+$ sudo apt-add-repository ppa:ansible/ansible
+
+```
 
 ![step6](/images/step6.png)
 
 **Step 6** :  Install the Ansible.
 
-**apt-get update**
+```
 
-**apt-get install ansible**
+apt-get update
+
+apt-get install ansible
+
+```
 
 ![step7](/images/step7.png)
 
@@ -239,13 +259,21 @@ the final output should look like this.
 
 * The EC2 instance shell will be opened. updtae the instance using the following command
 
-**sudo apt update**
+```
+
+sudo apt update
+
+```
 
 ![connect](/images/c3.png)
 
 install the ansible using the following command:
 
-**sudo apt install ansible**
+```
+
+sudo apt install ansible
+
+```
 
 Ansible will be installed in the Current instance.
 
@@ -255,26 +283,45 @@ Ansible will be installed in the Current instance.
 
 * In order to connect with other server you need to have an ssh in the instance.can create by following the below steps
 
-**cd .ssh**
+1.change the directory to.ssh
 
-**vim ansible_key**
+```
 
+cd .ssh
+
+```
+
+2.Create file and paste the key pair you have generated before.
+
+```
+
+vim ansible_key
+
+```
 
 ![connect](/images/c5.png)
 
-* Create file and paste the key pair you have generated before.
 
 ![connect](/images/c6.png)
 
 * To make an SSH key file readable in an AWS instance use the command 
 
-**chmod 400 /path/to/your/key.pem**
+```
 
-* Replace /path/to/your/key.pem with the actual path to your SSH key file.
+chmod 400 ansible_key
+
+```
+
+* Replace ansible_key with the actual path to your SSH key file.
 
 * Once u have  key pair u can connect to other server by connecting it's IP adress as shown in image:
 
-**ssh -i ~/.ssh/ansible_key ubuntu@IP**
+```
+
+ssh -i ~/.ssh/ansible_key ubuntu@IP
+
+```
+
 
 ![connect](/images/c7.png)
 
@@ -326,27 +373,43 @@ ansible <hosts> [-m <module_name>] -a <"arguments"> -u <username> [--become]
 
 Will Create first Ansible ad hoc command and at the same time validate that our inventory is configured as expected. Let’s go ahead and execute a ping command against all our hosts:
 
-**ansible all -m ping -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key**
+```
+
+ansible all -m ping -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key
+
+```
 
 ![adhoc](/images/adhoc1.png)
 
 seems like we can successfully ping the 3 hosts that we have defined in our hosts file.
 
-Next, run a live command only to the server1 node by using the **–limit** flag
+**Next, run a live command only to the server1 node by using the –limit flag**
 
-**ansible all -i /home/ubuntu/ansible/hosts --limit server1 -a "/bin/echo hello" --private-key=~/.ssh/ansible_key**
+```
+
+ansible all -i /home/ubuntu/ansible/hosts --limit server1 -a "/bin/echo hello" --private-key=~/.ssh/ansible_key
+
+```
 
 ![adhoc](/images/adhoc2.png)
 
-Next will run a command to check the Memory Usage
+**Next will run a command to check the Memory Usage**
 
-**ansible all -a "free-h"  -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key**
+```
+
+ansible all -a "free-h"  -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key
+
+```
 
 ![adhoc](/images/adhoc3.png)
 
-Run a command to check the servers **uptime**
+**Run a command to check the servers uptime**
+
+```
 
 ansible servers -a "uptime"  -i /home/ubuntu/ansible/hosts --private-key=~/.ssh/ansible_key
+
+```
 
 ![adhoc](/images/adhoc4.png)
 
@@ -379,19 +442,31 @@ A YAML starts with --- (3 hyphens) always.
 
 Lets Create a directory inside a master server where ansible is installed 
 
-**mkdir playbooks**
+```
+
+mkdir playbooks
+
+```
 
 ![pb1](/images/PB1.png)
 
 Change to the Playbook directory
 
-**cd playbooks**
+```
+
+cd playbooks
+
+```
 
 ![pb2](/images/PB2.png)
 
 Create a file with .yml or .yaml extension
 
-**Vim create_file.yml**
+```
+
+Vim create_file.yml
+
+```
 
 ![pb3](/images/PB3.png)
 
@@ -436,14 +511,21 @@ You  will find the file in the targeted hosts:
 
 ### YAML Tags
 
-Here are some YAML tags are given below, such as:
+Here are some Ansible Parameters are given below, such as:
 
 |  Tags     | Explanation  |
 |-----------|--------------|
-| Name	    |It specifies the name of the Ansible Playbooks.|
-| Hosts	    |It specifies the lists of the hosts against which you want to run the task. And the host's Tag is mandatory. It tells Ansible that on which hosts to run the listed tasks. These tasks can be run on the same machine or the remote machine. One can run the tasks on the multiple machines, and the host's tag can have a group of host's entry as well.|
-| Vars	    |Vars tag defines the variables which you can use in your playbook. Its usage is similar to the variables in any programming language.|
-| Tasks	    |Tasks are the lists of the actions which need to perform in the playbooks. All the playbooks should contain the tasks to be executed. A task field includes the name of the task. It is not mandatory but useful for debugging the playbook. Internally each task links to a piece of code called a module. A module should be executed, and arguments that are required for the module you want to run.|
+| name	    |It specifies the name of the Ansible Playbooks.|
+| hosts	    |It specifies the lists of the hosts against which you want to run the task. And the host's Tag is mandatory. It tells Ansible that on which hosts to run the listed tasks. These tasks can be run on the same machine or the remote machine. One can run the tasks on the multiple machines, and the host's tag can have a group of host's entry as well.|
+| vars	    |Vars tag defines the variables which you can use in your playbook. Its usage is similar to the variables in any programming language.|
+|vars_files |Specifies one or more YAML files containing variable definitions. These files are typically used to load external variable values into the playbook.|
+| tasks	    |Tasks are the lists of the actions which need to perform in the playbooks. All the playbooks should contain the tasks to be executed. A task field includes the name of the task. It is not mandatory but useful for debugging the playbook. Internally each task links to a piece of code called a module. A module should be executed, and arguments that are required for the module you want to run.|
+|become     |  Enables privilege escalation, allowing tasks to be executed with elevated permissions, such as using sudo or root.|
+|become_user | Specifies the user to switch to when using privilege escalation (become). It is typically used when executing tasks as a different user.|
+|gather_facts |Determines whether Ansible should gather facts about the target hosts before executing tasks. Facts provide information about the hosts, such as network configuration, operating system, and hardware details.|
+|ignore_errors| Controls the behavior when a task fails. If set to yes, Ansible will continue executing subsequent tasks even if an error occurs.|
+|serial  | Specifies the number of hosts to run tasks on simultaneously. It can be an absolute number or a percentage of the hosts in the play.|
+
 
 For more details on playbook refer official documentation: https://docs.ansible.com/ansible/latest/playbook_guide/index.html
 
